@@ -1,50 +1,48 @@
 import React, { useState } from 'react';
-import { Form, Input, Container, Row, Col, Button } from 'react-bootstrap';
+import { Form, Input, Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import firebase from 'firebase';
 
+const possibilities = ["Case", "CPU Cooler", "HDD", "Headphones", "SSD", "Fan", "PSU", "Prebuilt/Computer/PC",
+  "Webcam", "Controller", "Laptop", "Monitor", "Other", "VR", "RAM", "Headset", "Optical Drive", "CPU", "OS",
+  "Motherboard/MOBO", "Speakers", "Keyboard", "Networking", "Furniture", "GPU", "Mouse", "Bundle", "Mic", "Meta"]
+
+const initState = {}
+
+possibilities.map(part => {
+  initState[part] = { hasNotifications: false, maximumValue: 0 }
+})
+
 const Parameters = (props) => {
-  const [params, setParams] = useState({
-    "email": "",
-    "Case": false,
-    "CPU Cooler": false,
-    "HDD": false,
-    "Headphones": false,
-    "SSD": false,
-    "Fan": false,
-    "PSU": false,
-    "Prebuilt/Computer/PC": false,
-    "Webcam": false,
-    "Controller": false,
-    "Laptop": false,
-    "Monitor": false,
-    "Other": false,
-    "VR": false,
-    "RAM": false,
-    "Headset": false,
-    "Optical Drive": false,
-    "CPU": false,
-    "OS": false,
-    "Motherboard/MOBO": false,
-    "Speakers": false,
-    "Keyboard": false,
-    "Networking": false,
-    "Furniture": false,
-    "GPU": false,
-    "Mouse": false,
-    "Bundle": false,
-    "Mic": false,
-    "Meta": false
-  })
 
-  const handleChange = event => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+  const [params, setParams] = useState({ ...initState, email: "" });
 
+  const handleEmailChange = event => {
     setParams({
-      ...params, [name]: value
+      ...params, [event.target.name]: event.target.value
     });
   }
+
+  const handleParameterChange = event => {
+    let innerObj = params[event.target.name];
+    event.target.type === "checkbox" ?
+      innerObj.hasNotifications = event.target.checked :
+      innerObj.maximumValue = event.target.value;
+    setParams({
+      ...params, [event.target.name]: innerObj
+    });
+  }
+
+  const db = firebase.firestore();
+
+  const dataUpload = () => db.collection("users").doc(props.uid).set(
+    params
+  )
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
 
   return (<div>
     <br />
@@ -58,97 +56,24 @@ const Parameters = (props) => {
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Email where you want notifications sent</Form.Label>
               <Form.Control type="email" name="email"
-                placeholder="Enter email" name="email" value={params.email} onChange={handleChange} />
+                placeholder="Enter email" name="email" value={params.email} onChange={handleEmailChange} />
             </Form.Group>
-            <h6>What type of notifications do you want?</h6>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Case" name="Case" checked={params.Case} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="CPU Cooler" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="HDD" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Headphones" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="SSD" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Fan" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="PSU" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Prebuilt/Computer/PC" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Webcam" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Controller" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Laptop" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Monitor" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Other" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="VR" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="RAM" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Headset" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Optical Drive" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="CPU/Processor" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="OS" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Motherboard/MOBO" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Speakers" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Keyboard" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Networking" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Furniture" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="GPU" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Mouse" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Bundle" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Mic" />
-            </Form.Group>
-            <Form.Group controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Meta" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
+            <h6>Check the box for notifications on this type of part, and choose a maximum price under which you want
+              to see notifications!
+            </h6>
+            {possibilities.map(name => (<InputGroup className="mb-3">
+              <InputGroup.Prepend>
+                <InputGroup.Checkbox onChange={handleParameterChange} name={name} value={params[name].hasNotifications} />
+              </InputGroup.Prepend>
+              <InputGroup.Prepend>
+                <InputGroup.Text>$</InputGroup.Text>
+              </InputGroup.Prepend>
+              <FormControl type="number" name={name} value={params[name].maximumValue} placeholder="Enter a number" onChange={handleParameterChange} />
+              <InputGroup.Append>
+                <InputGroup.Text>{name}</InputGroup.Text>
+              </InputGroup.Append>
+            </InputGroup>))}
+            <Button variant="primary" onClick={dataUpload}>
               Set my notifications!
             </Button>
           </Form>

@@ -37,7 +37,7 @@ function App() {
           </Nav.Item></Nav>) : <div></div>}
       </Navbar>
       {
-        loggedIn ? (<Parameters />) : (<Login />)
+        loggedIn ? (<Parameters uid={UID} />) : (<Login />)
       }
     </div >
   );
