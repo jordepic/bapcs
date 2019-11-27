@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { Navbar } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Parameters from "./Parameters";
+import firebase from 'firebase';
+import Login from './Login';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(true);
+    }
+  });
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar bg="dark" variant="dark">
+        <Navbar.Brand>BAPCS Alerter</Navbar.Brand>
+      </Navbar>
+      {
+        loggedIn ? (<Parameters />) : (<Login />)
+      }
     </div>
   );
 }
