@@ -12,11 +12,11 @@ function App() {
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      setLoggedIn(true);
       setUID(user.uid);
+      setLoggedIn(true);
     } else {
-      setLoggedIn(false);
       setUID("");
+      setLoggedIn(false);
     }
   });
 

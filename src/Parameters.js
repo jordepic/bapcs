@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import firebase from 'firebase';
 
@@ -44,6 +44,21 @@ const Parameters = (props) => {
       console.error("Error writing document: ", error);
     });
 
+  const dataRetrieval = () => {
+    db.collection("users").doc(props.uid).get()
+      .then(doc => {
+        setParams(doc.data())
+      })
+      .catch(error => {
+      })
+  }
+
+  useEffect(() => {
+    if (props.uid !== "") {
+      dataRetrieval();
+    }
+  }, [])
+
   return (<div>
     <br />
     <Container fluid>
@@ -52,6 +67,10 @@ const Parameters = (props) => {
         <Col>
           <Form>
             <h3>Set your notification parameters!</h3>
+            <br />
+            <Button variant="primary" onClick={dataUpload}>
+              Set my notifications!
+            </Button>
             <br />
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Email where you want notifications sent</Form.Label>
@@ -63,7 +82,7 @@ const Parameters = (props) => {
             </h6>
             {possibilities.map(name => (<InputGroup className="mb-3">
               <InputGroup.Prepend>
-                <InputGroup.Checkbox onChange={handleParameterChange} name={name} value={params[name].hasNotifications} />
+                <InputGroup.Checkbox onChange={handleParameterChange} name={name} checked={params[name].hasNotifications} />
               </InputGroup.Prepend>
               <InputGroup.Prepend>
                 <InputGroup.Text>$</InputGroup.Text>
@@ -73,6 +92,7 @@ const Parameters = (props) => {
                 <InputGroup.Text>{name}</InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>))}
+            <br />
             <Button variant="primary" onClick={dataUpload}>
               Set my notifications!
             </Button>
