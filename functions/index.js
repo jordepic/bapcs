@@ -1,3 +1,5 @@
+const functions = require('firebase-functions');
+
 async function data() {
   const response = await fetch('https://www.reddit.com/r/buildapcsales/new/.json');
   const myJson = await response.json();
@@ -22,5 +24,10 @@ async function data() {
   return minPosts;
 }
 
-export default data;
-
+exports.parser = functions.pubsub.schedule('every 10 seconds').onRun((context) => {
+  data().then(posts => {
+    console.log('This will be run every 10 seconds!');
+    return null;
+  }).catch(error => { return null });
+  return null;
+});
